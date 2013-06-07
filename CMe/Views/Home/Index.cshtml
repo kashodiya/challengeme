@@ -1,0 +1,713 @@
+﻿@using CMe.Models
+@using System
+@using System.Collections
+@{
+    ViewBag.Title = "Challange Me - Home Page";
+}
+
+<i id="toggleBannerBtn" class="icon-resize-small pull-right"></i>
+<div id="bigBanner" class="hero-unit main-banner">
+    <!--
+    -->
+    <div id="bigBannerTitle">
+        <h1>Are you ready for the challenge?</h1>
+        <p style="color: black;">
+            Come and show your skills by solving challenges. Or challenge someone.
+        </p>
+    </div>
+    <p class="pull-right" id="bigBannerButtons">
+        <a class="btn btn-primary btn-large">Learn more</a>
+        <a id="createChallengeBtn---" 
+            href="#createChallengePanel" 
+            role="button" 
+            class="btn btn-primary btn-large createChallengeBtn" 
+            data-toggle="modal">Create a challenge</a>
+        <a id="editMyProfileBtn---"
+            href="#myProfilePanel" 
+            role="button" 
+            class="btn btn-primary btn-large editMyProfileBtn" 
+            data-toggle="modal">My Profile</a>
+    </p>
+</div>
+
+<div id="yesNoDialog" class="modal hide fade" data-keyboard="false" data-backdrop="static">
+    <div class="modal-header">
+        <h3 id="yesNoDialogTitle"></h3>
+    </div>
+    <div class="modal-body">
+        <p id="yesNoDialogBody"></p>
+    </div>
+    <div class="modal-footer">
+        <button id="yesNoDialogYesBtn" data-dismiss="modal"class="btn btn-success">Yes</button>
+        <button id="yesNoDialogNoBtn" class="btn" data-dismiss="modal" style="margin-left: 12px;">No</button>
+    </div>
+</div>
+
+<div id="createChallengePanel" class="modal hide fade" data-keyboard="false" data-backdrop="static">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3 class="createChallengePanelHeader">Add a challenge</h3>
+    </div>
+    <div class="modal-body">
+        <form id="myChallengeForm" action="@Url.Action("SaveChallenge", "Challenge")">
+            <!--
+            <input type="reset" id="myChallengeFormResetBtn" class="hide">This is hidden/>
+            -->
+            <input name="editMode" type="hidden" value="INSERT"/>
+            <input name="oid" type="hidden"/>
+            <!--TODO: Manage a hidden field to indicate if this is a add operation of edit-->
+            <fieldset>
+                <div class="control-group">
+                    <label>Title</label>
+                    <input name="challengeTitle"  class="input-xxlarge" type="text"/>
+                </div>
+                <div class="control-group">
+                    <label>Description</label>
+                    <textarea name="challengeDescription" class="input-xxlarge" rows="5"></textarea>
+                </div>
+                <div class="control-group">
+                    <!--TODO: Use Bootstrap date control-->
+                    <label>Deadline Date</label>
+                    <input name="deadlineDate" id="deadlineDate" class="span2" type="text"/>
+                </div>
+                <div class="control-group">
+                    <label>Estimated Hours</label>
+                    <select name="hoursNeeded" class="span1">
+                        <option>0</option>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        <option>6</option>
+                        <option>7</option>
+                        <option>8</option>
+                        <option>9</option>
+                        <option>10</option>
+                        <option>11</option>
+                        <option>12</option>
+                        <option>13</option>
+                        <option>14</option>
+                        <option>15</option>
+                        <option>16</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Keywords</label>
+                    <input name="challengeKeywordsTxt" id="challengeKeywordsTxt" type="text" placeholder="Type and hit enter"/>
+                </div>
+                <div class="control-group">
+                    <label>Status</label>
+                    <select name="status">
+                        <option>OPEN</option>
+                        <option>ASSIGNED</option>
+                        <option>COMPLETED</option>
+                        <option>DROPPED</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <!--
+                    <label>Assign this challenge</label>
+                    <input type="text" id="searchAvailableFighterInput" class="typeahead" data-provide="typeahead" style="z-index: 9999;"/>
+                    <a href="#availableFightersPanel" role="button" class="btn" data-toggle="modal">Add a fighter</a>
+                    -->
+
+                    <div id="assignedFightersList">
+                        <!--
+                        <div id="availableFightersTableWrapper" class="pull-left">
+                            <h5>Available Fighters</h5>
+                            <table id="availableFightersTable" class="table table-hover table-condensed">
+                                <tbody id="availableFightersTableBody">
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="" class="pull-left" style="margin-left: 20px;">
+                            <h5>Assigned to Fighters</h5>
+                            <table id="assignedFightersTable" class="table table-hover table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th colspan="3">Name and hours worked</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="assignedFightersTableBody">
+                                </tbody>
+                            </table>
+                        </div>
+                        -->
+
+                        <div class="accordion" id="challengeAssignmentsAccordion">
+                            <div class="accordion-group">
+                                <div class="accordion-heading">
+                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#challengeAssignmentsAccordion" href="#challengeAssignmentsBody">
+                                    Challenge assignments
+                                    </a>
+                                </div>
+                                <div id="challengeAssignmentsBody" class="accordion-body collapse in">
+                                    <div class="accordion-inner">
+                                        <table>
+                                            <tr>
+                                                <td valign=top>
+                                                    <div id="availableFightersTableWrapper">
+                                                        <h5>Select Fighters</h5>
+                                                        <table id="availableFightersTable" class="table table-hover table-condensed">
+                                                            <tbody id="availableFightersTableBody">
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </td>
+                                                <td valign=top>
+                                                    <div id="" class="pull-left" style="margin-left: 20px;">
+                                                        <h5>Assigned to Fighters</h5>
+                                                        <table id="assignedFightersTable" class="table table-hover table-condensed">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th colspan="3">Name and hours worked</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="assignedFightersTableBody">
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" form="myChallengeForm" id="myChallengeFormSubmitBtn" class="btn btn-success">Save Challenge</button>
+        <button class="btn" data-dismiss="modal" style="margin-left: 12px;">Ignore Changes</button>
+    </div>
+</div>
+
+<script id="assignedFightersTableBodyTemplate" type="text/x-handlebars-template">
+<tr>
+    <td>
+        <a data-loginid="{{loginId}}" 
+        data-name="{{name}}" 
+        data-hoursavailable="{{hoursAvailable}}"
+        class="btn btn-mini removeFighterFromChallengeBtn" 
+        >-</a>
+    </td>
+    <td>
+        {{name}}
+    </td>
+    <td>
+        <input name="hoursWorked-{{loginId}}" class="span1" value="{{hoursWorked}}"/>
+        <input name="assignedToLoginId-{{loginId}}" value="{{loginId}}" class="span1" type="hidden"/>
+    </td>
+</tr>
+</script>
+
+<script id="availableFightersTableBodyTemplate" type="text/x-handlebars-template">
+{{#each fighters}}
+    {{> availableFightersTableBodyRowTemplate}}
+{{/each}}
+</script>
+
+<script id="availableFightersTableBodyRowTemplate" type="text/x-handlebars-template">
+<tr>
+    <td>
+        <a data-loginid="{{loginId}}" 
+        data-name="{{name}}" 
+        data-hoursavailable="{{hoursAvailable}}"
+        class="btn btn-mini assighFighterToChallengeBtn" 
+        >+</a>
+    </td>
+    <td>{{name}}</td>
+    <td>{{hoursAvailable}}</td>
+</tr>
+</script>
+
+<!--
+<script id="assignedFightersListTemplate" type="text/x-handlebars-template">
+{{#each fighters}}
+    <input type="hideen" name="fighter-loginid-{{loginId}}"/>
+    <div>
+        <span>{{name}}</span> 
+        <a class="btn btn-mini" href="#"><i class="icon-remove"></i>Remove</a>
+    </div>
+{{/each}}
+</script>
+-->
+
+
+<div id="myProfilePanel" class="modal hide fade" data-keyboard="false" data-backdrop="static">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>My profile</h3>
+    </div>
+    <div class="modal-body">
+        <form id="myProfileForm" action="@Url.Action("UpdateFighter", "Fighter")">
+            <fieldset>
+                <div class="control-group">
+                    <label>Abour me</label>
+                    <textarea name="profileText" style="width: 90%" rows="3"></textarea>
+                </div>
+                <!--
+                <div class="control-group">
+                    <label>Name</label>
+                    <input name="name" class="input-xlarge" type="text">
+                </div>
+                <div class="control-group">
+                    <label>Email</label>
+                    <input name="email" class="input-xlarge" type="text">
+                </div>
+                -->
+                <div class="control-group">
+                    <label>Keywords</label>
+                    <input name="keywordsTxt" type="text" placeholder="Type and hit enter">
+                </div>
+
+                <div class="control-group">
+                    <label>Hours available</label>
+                    <select name="hoursAvailable" class="span1">
+                        <option>0</option>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        <option>6</option>
+                        <option>7</option>
+                        <option>8</option>
+                        <option>9</option>
+                        <option>10</option>
+                        <option>11</option>
+                        <option>12</option>
+                        <option>13</option>
+                        <option>14</option>
+                        <option>15</option>
+                        <option>16</option>
+                    </select>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" form="myProfileForm" id="myProfileFormSubmitBtn" class="btn btn-success">Save Profile</button>
+        <button class="btn" data-dismiss="modal" style="margin-left: 12px;">Ignore Changes</button>
+    </div>
+</div>
+    
+
+
+
+<div class="row" id="myScore">
+  <div class="span4">
+      <div class="well">
+          <div class="lead" style="margin-bottom: 0px">
+            You finished <span class="badge badge-inverse">2</span> challenges!
+          </div>
+      </div>
+  </div>
+  <div class="span4">
+      <div class="well">
+          <div class="lead" style="margin-bottom: 0px">
+              You fought for <span class="badge badge-inverse">8</span> hours!
+          </div>
+      </div>
+  </div>
+  <div class="span4">
+      <div class="well">
+          <div class="lead" style="margin-bottom: 0px">
+              Your fighting strength is <span class="badge badge-inverse">120 %</span>
+          </div>
+      </div>
+  </div>
+</div> 
+
+
+
+<ul class="nav nav-tabs" id="mainTab">
+    <li class="active">
+        <a id="fightersTabViewTab" href="#fightersTabView" data-toggle="tab"><h4>Fighters</h4></a>
+    </li>
+    <li><a id="allChallengesTabViewTab" href="#allChallengesTabView" data-toggle="tab"><h4>All Challenges</h4></a></li>
+    <li><a id="myChallengesTabViewTab" href="#myChallengesTabView" data-toggle="tab"><h4>My Challenges</h4></a></li>
+    <li><a id="myAssignmentsTabViewTab" href="#myAssignmentsTabView" data-toggle="tab"><h4>My Assignments</h4></a></li>
+</ul>
+
+
+<div class="tab-content">
+    <div class="tab-pane active" id="fightersTabView">
+        <p>
+            <button class="btn btn-mini btn-info" id="fightersListFilterToggleBtn" type="button">Show Filter Tools</button>
+            <button class="btn btn-mini btn-info" type="button">Show Shorting Tools</button>
+        </p>
+        <p id="fightersListFilterTools">
+            <span>Filter by name:</span> 
+            <input id="fightersListFilterByName"/>
+            &nbsp;&nbsp;&nbsp;
+            <span>Filter by keywords: </span>
+            <input id="fightersListFilterByKeywords"/>
+        </p>
+        <div id="allFightersList">Loading fighters...</div>
+        <!--
+        <p>fightersTabView</p>
+        <div>
+            Filter by name
+            Filter by hours available
+            Filter by keywords
+            Order by name
+            Order by strength
+            Order by # of challenges completed
+        </div>
+        <div>
+            <p>Contols on each row</p>
+            <ul>
+                <li>Email as a mailto link: Contact this fighter</li>
+                <li>Share this... Compose a nicely formatted email.</li>
+                <li>Challange this fighter button. 
+                    This button will show a list of users posted challenges. 
+                    Only show the button if the user has atleast 1 challenge in OPEN or ASSIGNED state.</li>
+            </ul>
+        </div>
+        -->
+    </div>
+    <div class="tab-pane" id="allChallengesTabView">
+        <!--
+        <p>
+            <button class="btn btn-mini btn-info" id="challengesListFilterToggleBtn" type="button">Show Filter Tools</button>
+            <button class="btn btn-mini btn-info" type="button">Show Shorting Tools</button>
+        </p>
+        -->
+        <div class="challengesListFilterAndShort" data-for-list="allChallengesList"></div>
+        <!--
+        <p id="challengesListFilterTools" class="hide">
+            <span id="challengesListFilterByTitleLabel">
+                Filter by title:
+            </span> 
+            <input id="challengesListFilterByTitle"/>
+            &nbsp;&nbsp;&nbsp;
+            <span id="challengesListFilterByCreatorNameLabel">
+                Filter by creator name:
+            </span> 
+            <input id="challengesListFilterByCreatorName"/>
+            &nbsp;&nbsp;&nbsp;
+            <span id="challengesListFilterByKeywordsLabel">
+                Filter by keywords: 
+            </span>
+            <input id="challengesListFilterByKeywords"/>
+        </p>
+        -->
+        <div id="allChallengesList">Loading challenges...</div>
+        <!--
+        <p>allChallengesTabView</p>
+        <div>
+            Filter by creator name
+            Filter by title
+            Filter by description
+            Filter by keywords
+            Filter by title or description or keywords
+            Filter by status
+            Show past challenges too
+            Order by creator name
+            Order by hours needed
+            Order by deadline date 
+        </div>
+        <div>
+            <p>Contols on each row</p>
+            <ul>
+                <li>Email as a mailto link: Contact challenge creator.</li>
+                <li>Share this... Compose a nicely formatted email.</li>
+            </ul>
+        </div>
+        -->
+    </div>
+    <div class="tab-pane" id="myChallengesTabView">
+        <!--
+        <p>
+            <button class="btn btn-mini btn-info" id="myChallengesListFilterToggleBtn" type="button">Show Filter Tools</button>
+            <button class="btn btn-mini btn-info" type="button">Show Shorting Tools</button>
+        </p>
+        -->
+        <div class="challengesListFilterAndShort" data-for-list="myChallengesList"></div>
+        <!--
+        <p id="myChallengesListFilterTools" class="hide">
+            <span id="myChallengesListFilterByTitleLabel">
+                Filter by title:
+            </span> 
+            <input id="myChallengesListFilterByTitle"/>
+            &nbsp;&nbsp;&nbsp;
+            <span id="myChallengesListFilterByCreatorNameLabel">
+                Filter by creator name:
+            </span> 
+            <input id="myChallengesListFilterByCreatorName"/>
+            &nbsp;&nbsp;&nbsp;
+            <span id="myChallengesListFilterByKeywordsLabel">
+                Filter by keywords: 
+            </span>
+            <input id="myChallengesListFilterByKeywords"/>
+        </p>
+        -->
+        <div id="myChallengesList">Loading my challenges...</div>
+        <!--
+        <p>myChallengesTabView</p>
+        <div>
+            Show only challenges I posted
+            Show only challenges I accepted
+            Filter by description
+            Filter by keywords
+            Filter by title or description or keywords
+            Filter by status
+            Show past challenges too
+            Order by creator name
+            Order by hours needed
+            Order by deadline date 
+        </div>
+        <div>
+            <p>Contols on each row</p>
+            <ul>
+                <li>Email link. Dynamically change text to : Contact fighter or Contact challenge creator.</li>
+                <li>Share this... Compose a nicely formatted email.</li>
+                <li>Edit. Only for challenge creator.</li>
+                <li></li>
+                <li></li>
+            </ul>
+        </div>
+        -->
+    </div>
+    <div class="tab-pane" id="myAssignmentsTabView">
+        <div class="challengesListFilterAndShort" data-for-list="myAssignmentsList"></div>
+        <div id="myAssignmentsList">Loading my assignemtns...</div>
+    </div>
+</div>
+
+<script id="challengesListFilterAndShortTemplate" type="text/x-handlebars-template">
+<p>
+    <button 
+        class="btn btn-mini btn-info challengesListFilterToggleBtn" 
+        data-for-list="{{listId}}" 
+        type="button">Show Filter Tools</button>
+    <button class="btn btn-mini btn-info challengesListSortToggleBtn" data-for-list="{{listId}}" type="button">Show Sorting Tools</button>
+</p>
+<p class="challengesListFilterTools hide" data-for-list="{{listId}}">
+    Filter by title:
+    <input class="challengesListFilterByTitle" data-for-list="{{listId}}"/>
+    &nbsp;&nbsp;&nbsp;
+    Filter by creator name:
+    <input class="challengesListFilterByCreatorName" data-for-list="{{listId}}"/>
+    &nbsp;&nbsp;&nbsp;
+    Filter by keywords: 
+    <input class="challengesListFilterByKeywords" data-for-list="{{listId}}"/>
+</p>
+<p class="challengesListSortTools hide" data-for-list="{{listId}}">
+    Short tools
+</p>
+</script>
+
+
+
+<script id="allFightersListTemplate" type="text/x-handlebars-template">
+{{#each fighters}}
+    <div class='fighterRow' 
+        data-name="{{uppercase name}}" 
+        data-keywords-txt="{{#each keywords}}{{uppercase this}},{{/each}}">
+        <ul class="fighterBodyHeader">
+            <li>
+                <span class="lead fightersListName">{{name}}</span>
+            </li>
+            <li>
+                Available <span class="badge badge-success">{{hoursAvailable}}</span> hours
+            </li>
+            <li>
+                <button class="btn btn-inverse btn-small">Email</button>
+            </li>
+        </ul>
+
+        <p>{{profileText}}</p>
+
+        <p class='keywordsList'>
+        {{#each keywords}}
+            <span class="label label-info keyword">{{this}}</span>
+        {{/each}}
+        </p>
+    </div>
+{{/each}}
+</script>
+
+<script id="allChallengesListTemplate" type="text/x-handlebars-template">
+{{#each challenges}}
+    <div class='challengeRow' 
+        data-id="{{Id}}"
+        data-creator-name="{{uppercase creatorName}}"
+        data-title="{{uppercase challengeTitle}}"
+        data-keywords-txt="{{#each keywords}}{{uppercase this}},{{/each}}" >
+        <div class="lead challengeTitle">{{challengeTitle}}</div>
+        <ul class="challengeBodyHeader">
+            <li>
+                <strong class="creatorName">{{creatorName}}</strong>
+            </li>
+            <li>
+                <span class="badge badge-success">{{hoursNeeded}}</span> hours
+            </li>
+            <li>
+                Status: <span class="label label-info">{{status}}</span>
+            </li>
+            <li>
+                Deadline: <span class="label label-info">{{dateFormat deadlineDate}}</span>
+            </li>
+            <li>
+                <button class="btn btn-inverse btn-small">Reply via Email</button>
+                <button class="btn btn-inverse btn-small">Accept this challenge</button>
+                <button class="btn btn-inverse btn-small">Share this</button>
+            </li>
+        </ul>
+
+        <p>{{challengeDescription}}</p>
+
+        <p class='keywordsList' data-keywords-txt="{{keywords}}">
+        {{#each keywords}}
+            <span class="label label-info">{{this}}</span>
+        {{/each}}
+        </p>
+    </div>
+
+{{/each}}
+</script>
+
+<script id="myChallengesListTemplate" type="text/x-handlebars-template">
+{{#each myChallenges}}
+    <div class='challengeRow' 
+        data-keywords-txt="{{#each keywords}}{{uppercase this}},{{/each}}"
+        data-creator-name="{{uppercase creatorName}}"
+        data-title="{{uppercase challengeTitle}}"
+        data-id="{{_id.$oid}}">
+        <div class="lead challengeTitle">{{challengeTitle}}</div>
+        <ul class="challengeBodyHeader">
+            <li>
+                <strong>{{creatorName}}</strong>
+            </li>
+            <li>
+                <span class="badge badge-success">{{hoursNeeded}}</span> hours
+            </li>
+            <li>
+                Status: <span class="label label-info">{{status}}</span>
+            </li>
+            <li>
+                Deadline: <span class="label label-info">{{dateFormat deadlineDate.$date}}</span>
+            </li>
+            <li>
+                <button class="btn btn-inverse btn-small myChallengeEditBtn" data-id="{{_id.$oid}}">Edit</button>
+                &nbsp;&nbsp;
+                <button class="btn btn-inverse btn-small myChallengeDeleteBtn" data-id="{{_id.$oid}}">Delete</button>
+            </li>
+        </ul>
+
+        <p>{{challengeDescription}}</p>
+
+        <p class='keywordsList'>
+        {{#each keywords}}
+            <span class="label label-info">{{this}}</span>
+        {{/each}}
+        </p>
+    </div>
+
+{{/each}}
+</script>
+
+
+<script id="myAssignmentsListTemplate" type="text/x-handlebars-template">
+{{#each myAssignments}}
+    <div class='challengeRow' 
+        data-title="{{uppercase challengeTitle}}"
+        data-keywords-txt="{{#each keywords}}{{uppercase this}},{{/each}}"
+        data-creator-name="{{uppercase creatorName}}"
+        data-id="{{_id.$oid}}">
+        <div class="lead challengeTitle">{{challengeTitle}}</div>
+        <ul class="challengeBodyHeader">
+            <li>
+                <strong>{{creatorName}}</strong>
+            </li>
+            <li>
+                <span class="badge badge-success">{{hoursNeeded}}</span> hours
+            </li>
+            <li>
+                Status: <span class="label label-info">{{status}}</span>
+            </li>
+            <li>
+                Deadline: <span class="label label-info">{{dateFormat deadlineDate.$date}}</span>
+            </li>
+            <li>
+                <button class="btn btn-inverse btn-small">Reply via Email</button>
+            </li>
+        </ul>
+
+        <p>{{challengeDescription}}</p>
+
+        <p class='keywordsList' data-keywords-txt="{{keywords}}">
+        {{#each keywords}}
+            <span class="label label-info">{{this}}</span>
+        {{/each}}
+        </p>
+    </div>
+{{/each}}
+</script>
+
+
+<!--
+
+<div id="fightersTabView">
+    fightersTabView
+</div>
+<div id="allChallengesTabView">
+    allChallengesTabView
+</div>
+<div id="myChallengesTabView">
+    myChallengesTabView
+</div>
+
+<ul class="inline">
+    <li>
+        <h4>You finished <span class="badge badge-inverse">2</span> challenges!</h4>
+    </li>
+    <li>
+        <h4>You fought for <span class="badge badge-inverse">8</span> hours!</h4>
+    </li>
+    <li>
+        <h4>Your fighting strength is <span class="badge badge-inverse">120 %</span>!</h4>
+    </li>
+</ul>
+
+<div class="row">
+  <div class="span4">
+      <div class="well">
+          <div class="lead">
+              Show fighters
+          </div>
+      </div>
+  </div>
+  <div class="span4">
+      <div class="well">
+          <div class="lead">
+              Show challenges
+          </div>
+      </div>
+  </div>
+  <div class="span4">
+      <div class="well">
+          <div class="lead">
+              Leaderboards
+          </div>
+      </div>
+  </div>
+</div> 
+
+<button id="getProfile">Get Profile</button>
+
+
+
+-->
+
+
+
+
+

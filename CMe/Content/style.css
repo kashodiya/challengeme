@@ -1,0 +1,72 @@
+﻿.main-banner 
+{
+    
+    background: -webkit-linear-gradient(45deg, #4F47FF 0%, #B3FFFF 100%) repeat scroll 0 0 transparent !important;
+    background: -webkit-linear-gradient(45deg, #4F47FF 0%, #B3FFFF 100%) repeat scroll 0 0 transparent !important;
+    color: White;
+}
+
+#toggleBannerBtn
+{
+    cursor: pointer;
+    margin-top: 5px;
+    margin-right: 5px;
+}
+
+#myProfilePanel
+{
+    display: none;
+}
+
+#createChallengePanel
+{
+    width: 655px;
+}
+
+.fighterBodyHeader li, .challengeBodyHeader li
+{
+    display: inline;    
+    padding-right: 45px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #EEE;
+}
+
+.fighterBodyHeader, .challengeBodyHeader
+{
+    padding: 0;
+    margin: 0px 0px 10px 0px;
+}
+
+.fighterRow, .challengeRow
+{
+    margin-bottom: 24px;
+}
+
+.challengeTitle
+{
+    margin-bottom: 10px;
+    background-color: #F9F9F9;
+    padding: 2px 0px 1px 7px ;
+}
+
+#fightersListFilterTools
+{
+    display: none;
+}
+
+#availableFightersTable
+{
+    width: 270px;
+}
+
+#availableFightersTableWrapper
+{
+    height: 200px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+#mainTab i
+{
+    vertical-align: none;
+}

@@ -1,0 +1,13 @@
+I've been a Java developer on the GWA (government wide accounting modernization project) now known as CARS (central accounting reporting system) for the Department of Treasury since 2002.  I look forward to it becoming the system of record in 2013/2014.  (At which point it goes to STL for maintenance.)  I'm also on our department "development support" team where we maintain department tools including CVS/SVN/Ant/Maven/Nexus/Hudson.  Additionally I am the ADC Representative for NY Central IT Development.  In my free time, I moderate at coderanch.com and mentor FIRST robotics high school team programmers.
+
+
+Background 
+Outside work, I am a volunteer moderator at JavaRanch a forum for technical questions.  I also have quite the computer book library from books I reviewed for them.
+
+I have three blogs:
+
+
+My work blog - Readable, Maintainable Code
+The NY Central IT ADC blog
+My public blog for things that come up at JavaRanch or general content.  Everything work specific stays on the work blog.
+

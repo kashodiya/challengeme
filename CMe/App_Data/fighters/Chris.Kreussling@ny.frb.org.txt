@@ -1,0 +1,5 @@
+I'm in charge of Development Services, part of Common Services, for the NY Central IT Development organization. My primary job responsibility is improving the development process. I keep abreast of good development practices through membership in professional organizations, reading hundreds of pages a week in magazines and online journals, and continually honing my own development practices and refining my craft.
+
+Background 
+
+I've been programming in one form or another since 1973. My first language was Basic, my storage medium: paper tape. Other languages I've programmed in over the years include Fortran, Assembler, COBOL, Exec, Rexx, Java, PHP, and limited Perl, as well as various scripting languages. (There's a long list of other alphabet soup, including XML, UML, ITIL, SQL, ...) Common themes throughout my professional career have been process improvement, automation, tool-building and knowledge-sharing.
